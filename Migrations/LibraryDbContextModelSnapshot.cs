@@ -1,0 +1,65 @@
+using BibliotekaAPI.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
+#nullable disable
+
+namespace BibliotekaAPI.Migrations;
+
+[DbContext(typeof(LibraryDbContext))]
+public partial class LibraryDbContextModelSnapshot : ModelSnapshot
+{
+    protected override void BuildModel(ModelBuilder modelBuilder)
+    {
+        modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
+
+        modelBuilder.Entity("BibliotekaAPI.Models.Author", b =>
+        {
+            b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
+            b.Property<string>("FirstName").IsRequired().HasColumnType("TEXT");
+            b.Property<string>("LastName").IsRequired().HasColumnType("TEXT");
+            b.HasKey("Id");
+            b.ToTable("Authors");
+        });
+
+        modelBuilder.Entity("BibliotekaAPI.Models.Book", b =>
+        {
+            b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
+            b.Property<int>("AuthorId").HasColumnType("INTEGER");
+            b.Property<string>("Title").IsRequired().HasColumnType("TEXT");
+            b.Property<int>("Year").HasColumnType("INTEGER");
+            b.HasKey("Id");
+            b.HasIndex("AuthorId");
+            b.ToTable("Books");
+        });
+
+        modelBuilder.Entity("BibliotekaAPI.Models.Copy", b =>
+        {
+            b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
+            b.Property<int>("BookId").HasColumnType("INTEGER");
+            b.Property<bool>("IsAvailable").HasColumnType("INTEGER");
+            b.HasKey("Id");
+            b.HasIndex("BookId");
+            b.ToTable("Copies");
+        });
+
+        modelBuilder.Entity("BibliotekaAPI.Models.Book", b =>
+        {
+            b.HasOne("BibliotekaAPI.Models.Author", "Author")
+                .WithMany("Books").HasForeignKey("AuthorId")
+                .OnDelete(DeleteBehavior.Cascade).IsRequired();
+            b.Navigation("Author");
+        });
+
+        modelBuilder.Entity("BibliotekaAPI.Models.Copy", b =>
+        {
+            b.HasOne("BibliotekaAPI.Models.Book", "Book")
+                .WithMany("Copies").HasForeignKey("BookId")
+                .OnDelete(DeleteBehavior.Cascade).IsRequired();
+            b.Navigation("Book");
+        });
+
+        modelBuilder.Entity("BibliotekaAPI.Models.Author", b => b.Navigation("Books"));
+        modelBuilder.Entity("BibliotekaAPI.Models.Book", b => b.Navigation("Copies"));
+    }
+}
